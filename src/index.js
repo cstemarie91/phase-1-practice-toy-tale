@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const toyLikes = document.createElement('p')
         toyLikes.textContent = toy.likes
         let numOfLikes = toyLikes.textContent 
+        numOfLikes.textContent = `Likes: '${toyLikes.textContent}'`
         
         const likeButton = document.createElement('button')
         likeButton.className = 'like-btn';
@@ -54,13 +55,32 @@ document.addEventListener("DOMContentLoaded", () => {
         main.appendChild(theToy);
 
 
-        function addLike(){
-          numOfLikes++;
-          toyLikes.textContent = numOfLikes;
-
-  
+       
+        likeButton.addEventListener('click', () => {
+          const newLikesCount = toy.likes + 1;
+          updateToyLikes(toy.id, newLikesCount);
+          toyLikes.textContent = `Likes: ${newLikesCount}`;
+        });
+        function updateToyLikes(toyId, newLikesCount) {
+          fetch(`http://localhost:3000/toys/${toyId}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+              likes: newLikesCount
+            })
+          })
+          .then(response => response.json())
+          .then(updatedToy => {
+            console.log('Toy updated:', updatedToy);
+            
+          })
+          .catch(error => {
+            console.error('Error updating toy:', error);
+          });
         }
-       likeButton.addEventListener('click', addLike);
       
       })
      
@@ -111,3 +131,5 @@ document.addEventListener("DOMContentLoaded", () => {
     
   
   
+
+ 
